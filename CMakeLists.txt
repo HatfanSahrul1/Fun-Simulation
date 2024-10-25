@@ -22,7 +22,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${PROJECT_SOURCE_DIR})
 
 # Add executable and link libraries
-add_executable(mcl mcl.cpp)
+add_executable(mcl mcl.cpp property.cpp operator.cpp senseUpdate.cpp particle.cpp debug.cpp)
 target_link_libraries(mcl
     ${OpenCV_LIBS}
     yaml-cpp        # Corrected YAML-CPP library link
