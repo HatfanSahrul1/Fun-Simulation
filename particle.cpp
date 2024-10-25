@@ -34,7 +34,7 @@ void Robot::moveParticles(std::vector<Robot>& particles, const cv::Size& mapSize
 void Robot::activedParticleScan(){
     for(int i=0;i<particles_.size();i++){
         particles_[i].CreateFov(particles_[i].fieldmap_);
-        particles_[i].LineScan(i);
-        // p.printPoint();
+        particles_[i].LineScan();
+        particles_[i].weight_ += calculateSimilarity(distances_, particles_[i].distances_);
     }
 }

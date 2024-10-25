@@ -9,9 +9,9 @@ void Robot::drawParticles(cv::Mat& map, std::vector<Robot>& particles) {
     for (const auto& p : particles) {
         cv::circle(map, p.position_, 2, merah, -1);  // red particles
     }
-    for(int i=0;i<particles.size();i++){
-        particles[i].CreateFov(map);
-    }
+    // for(int i=0;i<particles.size();i++){
+    //     particles[i].CreateFov(map);
+    // }
 }
 
 
@@ -81,8 +81,30 @@ void Robot::LineScan(int i){
         std::vector<cv::Point2f> filtered = FilterClose(temp_points);
         distances_.push_back(getDistance(filtered));
         detected_.push_back(filtered);
-       
     }
     // DrawIntersectionPoints(output, intersectionPoints);
     cv::imshow(std::to_string(i), output);
+}
+
+void Robot::DrawIntersectionPoints(cv::Mat& image, const std::vector<cv::Point2f>& intersectionPoints) {
+    // Buat salinan dari image asli untuk digambar
+    cv::Mat output = image.clone();
+    output = cv::Mat::zeros(image.size(), image.type());
+    
+    // Pastikan image dalam format BGR, jika tidak ubah dari grayscale ke BGR
+    if (output.channels() == 1) {
+        cv::cvtColor(output, output, cv::COLOR_GRAY2BGR);
+    }
+    
+    // Tentukan warna dan ukuran titik
+    cv::Scalar pointColor(0, 0, 255);  // Warna merah untuk titik (BGR)
+    int radius = 3;                    // Radius dari titik
+    int thickness = -1;                // -1 untuk menggambar lingkaran penuh
+    
+    // Loop melalui semua intersection points dan gambar pada image
+    for (const auto& point : intersectionPoints) {
+        cv::circle(output, point, radius, pointColor, thickness);
+    }
+    
+    cv::imshow("Intersection Points", output);
 }

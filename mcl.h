@@ -15,10 +15,10 @@ class Robot
         int n_particles_;
         cv::Point2f position_;
         float orientation_;
-        float weight_;
+        double weight_;
         std::vector<Robot> particles_;
         cv::Size mapSize_;
-        cv::Mat fov, fieldmap_, inputPoint;
+        cv::Mat fieldmap_, display_;
 
         std::vector<cv::Point> rotated_;
         std::vector<std::vector<cv::Point2f>> detected_;
@@ -27,12 +27,13 @@ class Robot
         // property
         Robot(cv::Mat mapInput);
         void init(cv::Point2f pos, float orient, float w, int n, cv::Size& mapSize);
+        std::vector<Robot> resampleParticles(const std::vector<Robot>& particles);
+        bool MainLoop(float move, float orient);
 
         //sense and update
-        void regularMove(Robot& robot, const cv::Size& mapSize, float speed, float orient);
+        void regularMove(const cv::Size& mapSize, float speed, float orient);
         void CreateFov(cv::Mat field);
         void LineScan();
-        void DrawIntersectionPoints(cv::Mat& image, const std::vector<cv::Point2f>& intersectionPoints);
 
         //particles
         std::vector<Robot> initializeParticles(int numParticles, const cv::Size& mapSize);
@@ -45,10 +46,12 @@ class Robot
         std::vector<double> getDistance(std::vector<cv::Point2f> points);
         double euclideanDistance(const std::vector<double>& v1, const std::vector<double>& v2);
         double calculateSimilarity(const std::vector<std::vector<double>>& distances1, const std::vector<std::vector<double>>& distances2);
+        void normalizeWeights(std::vector<Robot>& particles);
 
         //debug and visualization
         void drawRobot(cv::Mat& map);
         void drawParticles(cv::Mat& map, std::vector<Robot>& particles);
+        void DrawIntersectionPoints(cv::Mat& image, const std::vector<cv::Point2f>& intersectionPoints);
         void printPoint();
         void printSimilarity();
         void LineScan(int i);

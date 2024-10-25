@@ -1,12 +1,12 @@
 #include "mcl.h"
 
-void Robot::regularMove(Robot& robot, const cv::Size& mapSize, float speed, float orient){
-    robot.orientation_ += orient * CV_PI / 180.0;
-    robot.position_.x += speed * std::cos(robot.orientation_);
-    robot.position_.y += speed * std::sin(robot.orientation_);  
+void Robot::regularMove(const cv::Size& mapSize, float speed, float orient){
+    orientation_ += orient * CV_PI / 180.0;
+    position_.x += speed * std::cos(orientation_);
+    position_.y += speed * std::sin(orientation_);  
 
-    robot.position_.x = std::max(0.0f, std::min((float)mapSize.width, robot.position_.x));
-    robot.position_.y = std::max(0.0f, std::min((float)mapSize.height, robot.position_.y));
+    position_.x = std::max(0.0f, std::min((float)mapSize.width, position_.x));
+    position_.y = std::max(0.0f, std::min((float)mapSize.height, position_.y));
     
     moveParticles(particles_, mapSize, speed, orient);
 }
@@ -87,31 +87,5 @@ void Robot::LineScan(){
        
     }
     // DrawIntersectionPoints(output, intersectionPoints);
-    cv::imshow("Intersections", output);
-}
-
-        
-
-
-void Robot::DrawIntersectionPoints(cv::Mat& image, const std::vector<cv::Point2f>& intersectionPoints) {
-    // Buat salinan dari image asli untuk digambar
-    cv::Mat output = image.clone();
-    output = cv::Mat::zeros(image.size(), image.type());
-    
-    // Pastikan image dalam format BGR, jika tidak ubah dari grayscale ke BGR
-    if (output.channels() == 1) {
-        cv::cvtColor(output, output, cv::COLOR_GRAY2BGR);
-    }
-    
-    // Tentukan warna dan ukuran titik
-    cv::Scalar pointColor(0, 0, 255);  // Warna merah untuk titik (BGR)
-    int radius = 3;                    // Radius dari titik
-    int thickness = -1;                // -1 untuk menggambar lingkaran penuh
-    
-    // Loop melalui semua intersection points dan gambar pada image
-    for (const auto& point : intersectionPoints) {
-        cv::circle(output, point, radius, pointColor, thickness);
-    }
-    
-    cv::imshow("Intersection Points", output);
+    // cv::imshow("Intersections", output);
 }

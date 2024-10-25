@@ -1,21 +1,28 @@
 #include "mcl.h"
 
 void control(float &move, float &orient){
-    if(cv::waitKey(0)=='w'){
-        orient = 0.0f;
-        move = 2.0f;
-    }else if(cv::waitKey(0)=='s'){
-        orient = 0.0f;
-        move = -4.0f;
-    }else if(cv::waitKey(0)=='a'){
-        move = 0;
-        orient = -1.0f;
-    }else if(cv::waitKey(0)=='d'){
-        move = 0;
-        orient = 1.0f;   
-    }else{
-        move = 0;
-        orient = 0;
+    int key = cv::waitKey(1);  // Wait for a short period (1 ms) instead of blocking
+    switch (key) {
+        case 'w':
+            orient = 0.0f;
+            move = 2.0f;
+            break;
+        case 's':
+            orient = 0.0f;
+            move = -4.0f;
+            break;
+        case 'a':
+            move = 0;
+            orient = -1.0f;
+            break;
+        case 'd':
+            move = 0;
+            orient = 1.0f;
+            break;
+        default:
+            move = 0;
+            orient = 0;
+            break;
     }
 }
 
@@ -59,26 +66,18 @@ int main(){
 
     float updateMove = 0.0f, updateOrient = 0.0f;
 
-    while (true){
-        display = map.clone();
-        cv::cvtColor(display, display, cv::COLOR_GRAY2BGR);
 
-        myRobot.drawParticles(display, myRobot.particles_);
+
+
+    while (myRobot.MainLoop(updateMove, updateOrient)){
         
-        myRobot.drawRobot(display);
-        myRobot.CreateFov(display);
-        myRobot.LineScan();
-        myRobot.activedParticleScan();
-        myRobot.printSimilarity();
-        myRobot.regularMove(myRobot, mapSize, updateMove, updateOrient);
-        cv::imshow("Monte Carlo Localization Visualization", display);
-        // cv::imshow("sense", myRobot.fov);
+        cv::imshow("Monte Carlo Localization Visualization", myRobot.display_);
 
         updateMove=0;
         updateOrient=0;
         control(updateMove, updateOrient);
         
-        if (cv::waitKey(0)==27) break;
+        if (cv::waitKey(1)==27) break;
     }
     
     return 0;

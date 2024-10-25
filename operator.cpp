@@ -102,3 +102,14 @@ std::vector<cv::Point2f> Robot::FilterClose(std::vector<cv::Point2f> points) {
     }
     return result;
 }
+
+// Function to normalize particle weights
+void Robot::normalizeWeights(std::vector<Robot>& particles) {
+    double totalWeight = 0.0;
+    for (const auto& particle : particles) {
+        totalWeight += particle.weight_;
+    }
+    for (auto& particle : particles) {
+        particle.weight_ /= totalWeight;
+    }
+}
