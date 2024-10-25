@@ -28,3 +28,10 @@ target_link_libraries(mcl
     yaml-cpp        # Corrected YAML-CPP library link
     Threads::Threads
 )
+
+add_executable(coba main.cpp)
+target_link_libraries(coba
+    ${OpenCV_LIBS}
+    yaml-cpp        # Corrected YAML-CPP library link
+    Threads::Threads
+)
