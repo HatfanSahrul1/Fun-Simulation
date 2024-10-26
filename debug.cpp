@@ -9,9 +9,6 @@ void Robot::drawParticles(cv::Mat& map, std::vector<Robot>& particles) {
     for (const auto& p : particles) {
         cv::circle(map, p.position_, 2, merah, -1);  // red particles
     }
-    // for(int i=0;i<particles.size();i++){
-    //     particles[i].CreateFov(map);
-    // }
 }
 
 
@@ -107,4 +104,10 @@ void Robot::DrawIntersectionPoints(cv::Mat& image, const std::vector<cv::Point2f
     }
     
     cv::imshow("Intersection Points", output);
+}
+
+void Robot::drawFov(cv::Mat& field){
+    if(!field.empty()){
+        cv::polylines(field, rotated_, true, cv::Scalar(255, 0, 255), 1);
+    }   
 }

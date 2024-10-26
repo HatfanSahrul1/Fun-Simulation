@@ -1,7 +1,7 @@
 #include "mcl.h"
 
 Robot::Robot(cv::Mat mapInput){
-    fieldmap_ = mapInput.clone();
+    fieldmap_ = mapInput;
 }
 
 void Robot::init(cv::Point2f pos, float orient, float w, int n, cv::Size& mapSize){
@@ -20,8 +20,10 @@ bool Robot::MainLoop(float move, float orient){
     drawParticles(display_, particles_);
     
     drawRobot(display_);
-    CreateFov(display_);
+    CreateFov();
     LineScan();
+
+    drawFov(display_);
 
     activedParticleScan();
     regularMove(mapSize_, move, orient);

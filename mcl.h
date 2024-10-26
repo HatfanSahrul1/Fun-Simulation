@@ -32,7 +32,7 @@ class Robot
 
         //sense and update
         void regularMove(const cv::Size& mapSize, float speed, float orient);
-        void CreateFov(cv::Mat field);
+        void CreateFov();
         void LineScan();
 
         //particles
@@ -50,6 +50,7 @@ class Robot
 
         //debug and visualization
         void drawRobot(cv::Mat& map);
+        void drawFov(cv::Mat& field);
         void drawParticles(cv::Mat& map, std::vector<Robot>& particles);
         void DrawIntersectionPoints(cv::Mat& image, const std::vector<cv::Point2f>& intersectionPoints);
         void printPoint();

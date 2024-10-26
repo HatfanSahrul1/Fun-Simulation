@@ -12,8 +12,7 @@ void Robot::regularMove(const cv::Size& mapSize, float speed, float orient){
 }
         
         
-void Robot::CreateFov(cv::Mat field){
-    cv::Mat field2 = field.clone();
+void Robot::CreateFov(){
     std::vector<cv::Point2f> triangle_points;
     
     triangle_points.clear();
@@ -28,11 +27,7 @@ void Robot::CreateFov(cv::Mat field){
     rotated_.clear();
     rotated_.push_back(triangle_points[0]);
     rotated_.push_back(RotatePoint(triangle_points[1], triangle_points[0], angle));
-    rotated_.push_back(RotatePoint(triangle_points[2], triangle_points[0], angle));       
-    
-    if(!field.empty()){
-        cv::polylines(field2, rotated_, true, cv::Scalar(255, 0, 255), 1);
-    }        
+    rotated_.push_back(RotatePoint(triangle_points[2], triangle_points[0], angle));            
 }
 
         

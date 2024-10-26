@@ -53,7 +53,7 @@ void drawMap(cv::Mat& map, const cv::Size& size){
 int main(){
     cv::Size mapSize(950, 650);
     cv::Mat map, display;
-    int n = 30;
+    int n = 200;
     
     cv::Point2f position = cv::Point2f(mapSize.width / 2, mapSize.height / 2);
     float orientation = 20.0f;

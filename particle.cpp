@@ -5,8 +5,8 @@ std::vector<Robot> Robot::initializeParticles(int numParticles, const cv::Size& 
     std::random_device rd;
     std::mt19937 gen(rd());
     
-    std::uniform_real_distribution<> disX(0, mapSize.width);
-    std::uniform_real_distribution<> disY(0, mapSize.height);
+    std::uniform_real_distribution<> disX(50, mapSize.width - 50);
+    std::uniform_real_distribution<> disY(50, mapSize.height - 50);
     std::uniform_real_distribution<> disTheta(0, 2 * CV_PI);
     
     for (int i = 0; i < numParticles; ++i) {
@@ -33,7 +33,7 @@ void Robot::moveParticles(std::vector<Robot>& particles, const cv::Size& mapSize
 
 void Robot::activedParticleScan(){
     for(int i=0;i<particles_.size();i++){
-        particles_[i].CreateFov(particles_[i].fieldmap_);
+        particles_[i].CreateFov();
         particles_[i].LineScan();
         particles_[i].weight_ += calculateSimilarity(distances_, particles_[i].distances_);
     }
