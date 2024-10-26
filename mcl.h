@@ -47,6 +47,7 @@ class Robot
         double euclideanDistance(const std::vector<double>& v1, const std::vector<double>& v2);
         double calculateSimilarity(const std::vector<std::vector<double>>& distances1, const std::vector<std::vector<double>>& distances2);
         void normalizeWeights(std::vector<Robot>& particles);
+        double getMaxWeight(const std::vector<Robot>& particles);
 
         //debug and visualization
         void drawRobot(cv::Mat& map);

@@ -24,10 +24,11 @@ bool Robot::MainLoop(float move, float orient){
     LineScan();
 
     drawFov(display_);
-
+    
     activedParticleScan();
     regularMove(mapSize_, move, orient);
     particles_ = resampleParticles(particles_);
+    // std::cout<<getMaxWeight(particles_)<<std::endl;  
 
     return true;
 }
@@ -36,6 +37,12 @@ bool Robot::MainLoop(float move, float orient){
 std::vector<Robot> Robot::resampleParticles(const std::vector<Robot>& particles) {
     std::vector<Robot> newParticles;
     int numParticles = particles.size();
+    
+    double maxWeight = getMaxWeight(particles);
+    std::cout<<"weight : "<<maxWeight<<std::endl;
+    if(maxWeight < 0.75){
+        return initializeParticles(n_particles_, mapSize_);
+    }
     
     // Normalize weights
     std::vector<Robot> mutableParticles = particles;  // Make a mutable copy for normalization
@@ -60,8 +67,10 @@ std::vector<Robot> Robot::resampleParticles(const std::vector<Robot>& particles)
             cumulativeWeight += particle.weight_;
             if (randChoice <= cumulativeWeight) {
                 Robot newParticle(fieldmap_);
+                
                 newParticle.position_.x = particle.position_.x + noise(gen);
                 newParticle.position_.y = particle.position_.y + noise(gen);
+                
                 newParticle.weight_ = 1.0 / numParticles;  // Reset new weight
                 newParticles.push_back(newParticle);
                 break;

@@ -113,3 +113,12 @@ void Robot::normalizeWeights(std::vector<Robot>& particles) {
         particle.weight_ /= totalWeight;
     }
 }
+
+double Robot::getMaxWeight(const std::vector<Robot>& particles) {
+    if (particles.empty()) return 0.0;
+    return std::max_element(
+        particles.begin(), 
+        particles.end(),
+        [](const Robot& a, const Robot& b) { return a.weight_ < b.weight_; }
+    )->weight_;
+}
