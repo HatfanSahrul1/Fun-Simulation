@@ -21,6 +21,11 @@ std::vector<double> Robot::getDistance(std::vector<cv::Point2f> points){
     }
     return measured;
 }
+
+double Robot::GetDistance(cv::Point2f points){
+    double dist = sqrt(pow(abs(points.x - position_.x), 2) + pow(abs(points.y - position_.y), 2));
+    return dist;
+}
 double Robot::euclideanDistance(const std::vector<double>& v1, const std::vector<double>& v2){
     // Jika kedua vektor kosong, anggap jaraknya 0 (mirip 100%)
     if (v1.empty() && v2.empty()) {
@@ -63,6 +68,30 @@ double Robot::calculateSimilarity(const std::vector<std::vector<double>>& distan
     }
     
     return total_similarity / distances1.size();  // Ambil rata-rata kesamaan
+}
+
+double Robot::calculateCosineSimilarity(const std::vector<double>& vec1, const std::vector<double>& vec2) {
+    size_t maxLength = std::max(vec1.size(), vec2.size());
+    std::vector<double> paddedVec1(maxLength, 0.0);
+    std::vector<double> paddedVec2(maxLength, 0.0);
+
+    // Copy vektor dan pad dengan nol
+    std::copy(vec1.begin(), vec1.end(), paddedVec1.begin());
+    std::copy(vec2.begin(), vec2.end(), paddedVec2.begin());
+
+    double dotProduct = 0.0;
+    double magnitudeVec1 = 0.0;
+    double magnitudeVec2 = 0.0;
+
+    for (size_t i = 0; i < maxLength; ++i) {
+        dotProduct += paddedVec1[i] * paddedVec2[i];
+        magnitudeVec1 += paddedVec1[i] * paddedVec1[i];
+        magnitudeVec2 += paddedVec2[i] * paddedVec2[i];
+    }
+
+    if (magnitudeVec1 == 0.0 || magnitudeVec2 == 0.0) return 0.0;
+
+    return dotProduct / (std::sqrt(magnitudeVec1) * std::sqrt(magnitudeVec2));
 }
 
 std::vector<cv::Point2f> Robot::FilterClose(std::vector<cv::Point2f> points) {

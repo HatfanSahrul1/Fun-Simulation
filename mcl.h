@@ -23,6 +23,7 @@ class Robot
         std::vector<cv::Point> rotated_;
         std::vector<std::vector<cv::Point2f>> detected_;
         std::vector<std::vector<double>> distances_;
+        std::vector<double> distance_;
 
         // property
         Robot(cv::Mat mapInput);
@@ -44,8 +45,10 @@ class Robot
         cv::Point RotatePoint(const cv::Point2f& p, const cv::Point2f& pivot, double angle);
         std::vector<cv::Point2f> FilterClose(std::vector<cv::Point2f> points);
         std::vector<double> getDistance(std::vector<cv::Point2f> points);
+        double GetDistance(cv::Point2f points);
         double euclideanDistance(const std::vector<double>& v1, const std::vector<double>& v2);
         double calculateSimilarity(const std::vector<std::vector<double>>& distances1, const std::vector<std::vector<double>>& distances2);
+        double calculateCosineSimilarity(const std::vector<double>& vec1, const std::vector<double>& vec2);
         void normalizeWeights(std::vector<Robot>& particles);
         double getMaxWeight(const std::vector<Robot>& particles);
 
