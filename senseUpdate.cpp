@@ -33,7 +33,8 @@ void Robot::CreateFov(){
         
 
 void Robot::LineScan(){
-    cv::Mat image = fieldmap_.clone();    
+    // cv::Mat image = fieldmap_.clone(); 
+    const cv::Mat& image = fieldmap_;
     if (image.empty()) {
         std::cerr << "Error: Image not loaded." << std::endl;
         return;
@@ -55,6 +56,7 @@ void Robot::LineScan(){
     
     detected_.clear();
     distances_.clear();
+    distance_.clear();
     
     for (int line_idx = 0; line_idx <= num_lines; ++line_idx) {
         float t = static_cast<float>(line_idx) / num_lines;  // Interpolasi antara sudut p1 dan p2
@@ -77,8 +79,12 @@ void Robot::LineScan(){
         
         // Filter intersection points per line
         std::vector<cv::Point2f> filtered = FilterClose(temp_points);
-        distances_.push_back(getDistance(filtered));
-        detected_.push_back(filtered);
+        // distances_.push_back(getDistance(filtered));
+        // detected_.push_back(filtered);
+
+        for(int i=0;i<filtered.size();i++){
+            distance_.push_back(GetDistance(filtered[i]));
+        }
        
     }
     // DrawIntersectionPoints(output, intersectionPoints);

@@ -35,6 +35,6 @@ void Robot::activedParticleScan(){
     for(int i=0;i<particles_.size();i++){
         particles_[i].CreateFov();
         particles_[i].LineScan();
-        particles_[i].weight_ += calculateSimilarity(distances_, particles_[i].distances_);
+        particles_[i].weight_ += calculateCosineSimilarity(distance_, particles_[i].distance_);
     }
 }
