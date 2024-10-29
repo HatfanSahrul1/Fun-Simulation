@@ -1,4 +1,5 @@
 #include <opencv2/opencv.hpp>
+#include <opencv2/features2d.hpp>
 #include <vector>
 #include <random>
 #include <cmath>
@@ -30,6 +31,7 @@ class Robot
         void init(cv::Point2f pos, float orient, float w, int n, cv::Size& mapSize);
         std::vector<Robot> resampleParticles(const std::vector<Robot>& particles);
         bool MainLoop(float move, float orient);
+        cv::Point2f getMeanPosition() const;
 
         //sense and update
         void regularMove(const cv::Size& mapSize, float speed, float orient);
@@ -51,6 +53,7 @@ class Robot
         double calculateCosineSimilarity(const std::vector<double>& vec1, const std::vector<double>& vec2);
         void normalizeWeights(std::vector<Robot>& particles);
         double getMaxWeight(const std::vector<Robot>& particles);
+        double averageWeight(const std::vector<Robot>& robots);
 
         //debug and visualization
         void drawRobot(cv::Mat& map);

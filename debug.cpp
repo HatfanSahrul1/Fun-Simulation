@@ -6,9 +6,16 @@ void Robot::drawRobot(cv::Mat& map) {
 }
 
 void Robot::drawParticles(cv::Mat& map, std::vector<Robot>& particles) {
+     std::vector<cv::KeyPoint> keypoints;
+    keypoints.reserve(particles.size());
+    
     for (const auto& p : particles) {
-        cv::circle(map, p.position_, 2, merah, -1);  // red particles
+        // Create a KeyPoint for each point (you can set size and angle as needed)
+        keypoints.emplace_back(p.position_, 5); // '5' is an example size
     }
+    
+    // Draw all keypoints
+    cv::drawKeypoints(map, keypoints, map, merah);
 }
 
 

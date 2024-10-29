@@ -26,6 +26,7 @@ double Robot::GetDistance(cv::Point2f points){
     double dist = sqrt(pow(abs(points.x - position_.x), 2) + pow(abs(points.y - position_.y), 2));
     return dist;
 }
+
 double Robot::euclideanDistance(const std::vector<double>& v1, const std::vector<double>& v2){
     // Jika kedua vektor kosong, anggap jaraknya 0 (mirip 100%)
     if (v1.empty() && v2.empty()) {
@@ -150,4 +151,16 @@ double Robot::getMaxWeight(const std::vector<Robot>& particles) {
         particles.end(),
         [](const Robot& a, const Robot& b) { return a.weight_ < b.weight_; }
     )->weight_;
+}
+
+double Robot::averageWeight(const std::vector<Robot>& robots) {
+    if (robots.empty()) return 0.0; // Menghindari pembagian dengan nol
+
+    double totalWeight = 0.0;
+
+    for (const auto& robot : robots) {
+        totalWeight += robot.weight_;
+    }
+
+    return totalWeight / robots.size(); // Menghitung rata-rata
 }

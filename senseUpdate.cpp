@@ -62,7 +62,7 @@ void Robot::LineScan(){
         float t = static_cast<float>(line_idx) / num_lines;  // Interpolasi antara sudut p1 dan p2
         cv::Point interpolated_point = p1 + t * (p2 - p1);
         
-        cv::line(output, center, interpolated_point, cv::Scalar(255), 1);                
+        cv::line(output, center, interpolated_point, cv::Scalar(255), 1);
         
         cv::LineIterator it(image, center, interpolated_point, 8);  
         

@@ -28,7 +28,7 @@ bool Robot::MainLoop(float move, float orient){
     activedParticleScan();
     regularMove(mapSize_, move, orient);
     particles_ = resampleParticles(particles_);
-    // std::cout<<getMaxWeight(particles_)<<std::endl;  
+    // std::cout<<particles_.size()<<std::endl;
 
     return true;
 }
@@ -38,16 +38,16 @@ std::vector<Robot> Robot::resampleParticles(const std::vector<Robot>& particles)
     std::vector<Robot> newParticles;
     int numParticles = particles.size();
     
-    double maxWeight = getMaxWeight(particles);
-    std::cout<<"weight : "<<maxWeight<<std::endl;
-    if(maxWeight < 0.75){
-        return initializeParticles(n_particles_, mapSize_);
-    }
-    
     // Normalize weights
     std::vector<Robot> mutableParticles = particles;  // Make a mutable copy for normalization
     normalizeWeights(mutableParticles);
     
+    double maxWeight = getMaxWeight(particles);
+    std::cout<<"weight : "<<maxWeight<<" rerata : "<<averageWeight(particles_)<<std::endl;
+    // if(maxWeight < 0.95){
+    //     return initializeParticles(n_particles_, mapSize_);
+    // }
+
     // Setup random number generator
     std::random_device rd;
     std::mt19937 gen(rd());
@@ -78,4 +78,17 @@ std::vector<Robot> Robot::resampleParticles(const std::vector<Robot>& particles)
         }
     }
     return newParticles;
+}
+
+cv::Point2f Robot::getMeanPosition() const {
+    float sumX = 0.0f;
+    float sumY = 0.0f;
+    int particleCount = particles_.size();
+
+    for (const auto& particle : particles_) {
+        sumX += particle.position_.x;
+        sumY += particle.position_.y;
+    }
+
+    return cv::Point2f(sumX / particleCount, sumY / particleCount);
 }

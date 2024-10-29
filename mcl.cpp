@@ -33,30 +33,21 @@ void drawMap(cv::Mat& map, const cv::Size& size){
     
     cv::rectangle(map, cv::Point(50, 50), cv::Point(width - 50, height - 50), cv::Scalar(255, 255, 255), 2);
 
-    std::vector<cv::Point2f> l = {cv::Point2f(width*2/3, 50), cv::Point2f(width*2/3, height * 3/8), cv::Point2f((width*2/3) + 70, height * 3/8)};
-    std::vector<cv::Point2f> t = {cv::Point2f(width*3/5, height*2/3), cv::Point2f(width-50, height*2/3), 
-                                    cv::Point2f(width*3/5, (height*2/3)-25), cv::Point2f(width*3/5, (height*2/3)+25)};
-    std::vector<cv::Point2f> i = {cv::Point2f(width*4/10, 120), cv::Point2f(width*4/10, height-50)};
+    cv::line(map, cv::Point(width / 2, 50), cv::Point(width / 2, height - 50), cv::Scalar(255), 2);
 
-    // l
-    cv::line(map, l[0], l[1], cv::Scalar(255), 2);
-    cv::line(map, l[1], l[2], cv::Scalar(255), 2);
+    cv::circle(map, cv::Point(width / 2, height / 2), 100, cv::Scalar(255), 2);
 
-    // t 
-    cv::line(map, t[0], t[1], cv::Scalar(255), 2);
-    cv::line(map, t[2], t[3], cv::Scalar(255), 2);
-
-    // i
-    cv::line(map, i[0], i[1], cv::Scalar(255), 2);
+    cv::rectangle(map, cv::Point(50, 50 + 60), cv::Point(145, height - 50 - 60), cv::Scalar(255), 2);
+    cv::rectangle(map, cv::Point(width - 50 - 95, 50 + 60), cv::Point(width - 50, height - 50 - 60), cv::Scalar(255), 2);
 }
 
 int main(){
     cv::Size mapSize(950, 650);
     cv::Mat map, display;
-    int n = 800;
+    int n = 400;
     
-    cv::Point2f position = cv::Point2f(mapSize.width / 2, mapSize.height / 2);
-    float orientation = 20.0f;
+    cv::Point2f position = cv::Point2f(mapSize.width / 2 + 5, mapSize.height / 2 - 70);
+    float orientation = 0.5f;
     float weight = 1.0f;
 
     drawMap(map, mapSize);

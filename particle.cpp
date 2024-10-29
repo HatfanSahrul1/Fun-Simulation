@@ -32,6 +32,7 @@ void Robot::moveParticles(std::vector<Robot>& particles, const cv::Size& mapSize
 }
 
 void Robot::activedParticleScan(){
+    #pragma omp parallel for
     for(int i=0;i<particles_.size();i++){
         particles_[i].CreateFov();
         particles_[i].LineScan();
