@@ -42,41 +42,40 @@ std::vector<Robot> Robot::resampleParticles(const std::vector<Robot>& particles)
     std::vector<Robot> mutableParticles = particles;  // Make a mutable copy for normalization
     normalizeWeights(mutableParticles);
     
-    double maxWeight = getMaxWeight(particles);
-    std::cout<<"weight : "<<maxWeight<<" rerata : "<<averageWeight(particles_)<<std::endl;
-    // if(maxWeight < 0.95){
-    //     return initializeParticles(n_particles_, mapSize_);
-    // }
+    // Find maximum weight
+    double maxWeight = getMaxWeight(mutableParticles);
+    // std::cout << "Max weight: " << maxWeight << " Average weight: " << averageWeight(mutableParticles) << std::endl;
 
     // Setup random number generator
     std::random_device rd;
     std::mt19937 gen(rd());
     std::uniform_real_distribution<> dis(0, 1);
-    std::normal_distribution<> noise(0, 5.0);  // Position noise in pixels
 
-    
-    // Roulette-wheel selection
+    // Initialize index and beta
+    int index = static_cast<int>(dis(gen) * numParticles);
+    double beta = 0.0;
+
     for (int i = 0; i < numParticles; ++i) {
-        double randChoice = dis(gen);
-        double cumulativeWeight = 0.0;
+        // Increase beta by a random amount within 2*maxWeight
+        beta += dis(gen) * 2.0 * maxWeight;
 
-        // std::cout<<"resampleParticles"<<numParticles<<std::endl;
-
-        
-        for (const auto& particle : mutableParticles) {
-            cumulativeWeight += particle.weight_;
-            if (randChoice <= cumulativeWeight) {
-                Robot newParticle(fieldmap_);
-                
-                newParticle.position_.x = particle.position_.x + noise(gen);
-                newParticle.position_.y = particle.position_.y + noise(gen);
-                
-                newParticle.weight_ = 1.0 / numParticles;  // Reset new weight
-                newParticles.push_back(newParticle);
-                break;
-            }
+        // Move index forward until beta is less than or equal to the particle's weight
+        while (beta > mutableParticles[index].weight_) {
+            beta -= mutableParticles[index].weight_;
+            index = (index + 1) % numParticles;
         }
+
+        // Create a new particle around the selected particle's position with noise
+        Robot newParticle(fieldmap_);
+        std::normal_distribution<> noise(0, 10.0);  // Position noise in pixels
+        newParticle.position_.x = mutableParticles[index].position_.x + noise(gen);
+        newParticle.position_.y = mutableParticles[index].position_.y + noise(gen);
+        newParticle.weight_ = 1.0 / numParticles;  // Reset new weight
+
+        // Add the new particle to the resampled list
+        newParticles.push_back(newParticle);
     }
+
     return newParticles;
 }
 
