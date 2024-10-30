@@ -26,9 +26,14 @@ bool Robot::MainLoop(float move, float orient){
     drawFov(display_);
     
     activedParticleScan();
-    regularMove(mapSize_, move, orient);
-    particles_ = resampleParticles(particles_);
+    if(move!=0 || orient!=0){
+        regularMove(mapSize_, move, orient);
+    }else{
+        particles_ = resampleParticles(particles_);
+    }
+    
     // std::cout<<particles_.size()<<std::endl;
+    // printPoint();
 
     return true;
 }
@@ -38,13 +43,16 @@ std::vector<Robot> Robot::resampleParticles(const std::vector<Robot>& particles)
     std::vector<Robot> newParticles;
     int numParticles = particles.size();
     
+    double maxWeight = getMaxWeight(particles);
+    std::cout << "Max weight: " << maxWeight << " Average weight: " << averageWeight(particles) << std::endl;
+    if(maxWeight<0.90){
+        return resetParticles(particles);
+    }
     // Normalize weights
     std::vector<Robot> mutableParticles = particles;  // Make a mutable copy for normalization
     normalizeWeights(mutableParticles);
     
     // Find maximum weight
-    double maxWeight = getMaxWeight(mutableParticles);
-    // std::cout << "Max weight: " << maxWeight << " Average weight: " << averageWeight(mutableParticles) << std::endl;
 
     // Setup random number generator
     std::random_device rd;
@@ -67,7 +75,7 @@ std::vector<Robot> Robot::resampleParticles(const std::vector<Robot>& particles)
 
         // Create a new particle around the selected particle's position with noise
         Robot newParticle(fieldmap_);
-        std::normal_distribution<> noise(0, 10.0);  // Position noise in pixels
+        std::normal_distribution<> noise(0.0, 5.0);  // Position noise in pixels
         newParticle.position_.x = mutableParticles[index].position_.x + noise(gen);
         newParticle.position_.y = mutableParticles[index].position_.y + noise(gen);
         newParticle.weight_ = 1.0 / numParticles;  // Reset new weight

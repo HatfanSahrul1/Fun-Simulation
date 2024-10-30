@@ -31,6 +31,33 @@ void Robot::moveParticles(std::vector<Robot>& particles, const cv::Size& mapSize
     }
 }
 
+std::vector<Robot> Robot::resetWeights(std::vector<Robot>& particles){
+    std::vector<Robot> reseted;
+    for (auto& p : particles) {
+        p.weight_ = 1.0/n_particles_;
+        reseted.push_back(p);
+    }
+    return reseted;
+}
+
+std::vector<Robot> Robot::resetParticles(std::vector<Robot> particles){
+    std::vector<Robot> newParticles;
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    
+    std::uniform_real_distribution<> disX(50, mapSize_.width - 50);
+    std::uniform_real_distribution<> disY(50, mapSize_.height - 50);
+    std::uniform_real_distribution<> disTheta(0, 2 * CV_PI);
+    
+    for (auto& p : particles) {
+        p.position_ = cv::Point2f(disX(gen), disY(gen));
+        p.orientation_ = disTheta(gen);
+        p.weight_ = 1.0 / n_particles_;  // uniform weight_
+        newParticles.push_back(p);
+    }
+    return newParticles;
+}
+
 void Robot::activedParticleScan(){
     #pragma omp parallel for
     for(int i=0;i<particles_.size();i++){

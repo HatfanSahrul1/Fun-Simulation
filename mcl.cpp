@@ -46,8 +46,8 @@ int main(){
     cv::Mat map, display;
     int n = 400;
     
-    cv::Point2f position = cv::Point2f(mapSize.width / 2 + 5, mapSize.height / 2 - 70);
-    float orientation = 0.5f;
+    cv::Point2f position = cv::Point2f(mapSize.width / 2 + 125, mapSize.height / 2 - 90);
+    float orientation = -0.5f;
     float weight = 1.0f;
 
     drawMap(map, mapSize);

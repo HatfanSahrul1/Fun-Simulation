@@ -41,6 +41,8 @@ class Robot
         //particles
         std::vector<Robot> initializeParticles(int numParticles, const cv::Size& mapSize);
         void moveParticles(std::vector<Robot>& particles, const cv::Size& mapSize, float& speed, float& orient);
+        std::vector<Robot> resetWeights(std::vector<Robot>& particles);
+        std::vector<Robot> resetParticles(std::vector<Robot> particles);
         void activedParticleScan();
 
         //math and operations
