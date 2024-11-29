@@ -42,7 +42,32 @@ void drawMap(cv::Mat& map, const cv::Size& size){
 }
 
 void on_trackbar(int, void* userdata){
+    cv::Mat map;
+    cv::Size size(950, 650);
 
+    drawMap(map, size);
+    
+    cv::cvtColor(map, map, cv::COLOR_GRAY2BGR);
+
+    int* points = (int*)userdata;
+    int x = points[0];
+    int y = points[1];
+
+    cv::circle(map, cv::Point(x, y), 5, cv::Scalar(0, 0, 255), -1);
+
+    cv::imshow("Triangle", map);
+}
+
+void debugLandmark(){
+    //debugging purposes
+    cv::namedWindow("Triangle");
+
+    int points[2] = { 200, 200 };
+
+    cv::createTrackbar("X", "Triangle", &points[0], 950, on_trackbar, points);
+    cv::createTrackbar("Y", "Triangle", &points[1], 650, on_trackbar, points);
+
+    on_trackbar(0, points);
 }
 
 int main(){
@@ -64,17 +89,14 @@ int main(){
     int control_value[2] = {1, 1};
 
     cv::namedWindow("control", cv::WINDOW_AUTOSIZE);
-    cv::createTrackbar("move", "control", &control_value[0], 2, on_trackbar, control_value);
-    cv::createTrackbar("orient", "control", &control_value[1], 2, on_trackbar, control_value);
+    cv::createTrackbar("move", "control", &control_value[0], 2);
+    cv::createTrackbar("orient", "control", &control_value[1], 2);
 
-    on_trackbar(0, control_value);
+    // debugLandmark();
 
     while (myRobot.MainLoop(control_value[0] + (-1), control_value[1] + (-1))){
         
         cv::imshow("Monte Carlo Localization Visualization", myRobot.display_);
-        // updateMove=0;
-        // updateOrient=0;
-        // control(updateMove, updateOrient);
         
         if (cv::waitKey(1)==27) break;
     }
