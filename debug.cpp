@@ -6,7 +6,7 @@ void Robot::drawRobot(cv::Mat& map) {
 }
 
 void Robot::drawParticles(cv::Mat& map, std::vector<Robot>& particles) {
-     std::vector<cv::KeyPoint> keypoints;
+    std::vector<cv::KeyPoint> keypoints;
     keypoints.reserve(particles.size());
     
     for (const auto& p : particles) {
@@ -84,7 +84,7 @@ void Robot::LineScan(int i){
         // Filter intersection points per line
         std::vector<cv::Point2f> filtered = FilterClose(temp_points);
         distances_.push_back(getDistance(filtered));
-        detected_.push_back(filtered);
+        // detected_.push_back(filtered);
     }
     // DrawIntersectionPoints(output, intersectionPoints);
     cv::imshow(std::to_string(i), output);
@@ -116,5 +116,13 @@ void Robot::DrawIntersectionPoints(cv::Mat& image, const std::vector<cv::Point2f
 void Robot::drawFov(cv::Mat& field){
     if(!field.empty()){
         cv::polylines(field, rotated_, true, cv::Scalar(255, 0, 255), 1);
-    }   
+    }
+
+    std::vector<cv::KeyPoint> keypoints;
+    keypoints.reserve(detected_.size());
+    
+    for (const auto& p : detected_) {
+        keypoints.emplace_back(p, 3);
+    }
+    cv::drawKeypoints(field, keypoints, field, biru);
 }

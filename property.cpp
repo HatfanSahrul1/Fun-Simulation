@@ -44,9 +44,9 @@ std::vector<Robot> Robot::resampleParticles(const std::vector<Robot>& particles)
     
     double maxWeight = getMaxWeight(particles);
     std::cout<<"weight : "<<maxWeight<<" rerata : "<<averageWeight(particles_)<<std::endl;
-    // if(maxWeight < 0.95){
-    //     return initializeParticles(n_particles_, mapSize_);
-    // }
+    if(maxWeight < 0.95){
+        return initializeParticles(n_particles_, mapSize_);
+    }
 
     // Setup random number generator
     std::random_device rd;

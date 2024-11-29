@@ -7,6 +7,7 @@
 
 const cv::Scalar merah = cv::Scalar(0, 0, 255);
 const cv::Scalar hijau = cv::Scalar(0, 255, 0);
+const cv::Scalar biru = cv::Scalar(255, 0, 0);
 
 
 class Robot
@@ -22,7 +23,7 @@ class Robot
         cv::Mat fieldmap_, display_;
 
         std::vector<cv::Point> rotated_;
-        std::vector<std::vector<cv::Point2f>> detected_;
+        std::vector<cv::Point2f> detected_;
         std::vector<std::vector<double>> distances_;
         std::vector<double> distance_;
 

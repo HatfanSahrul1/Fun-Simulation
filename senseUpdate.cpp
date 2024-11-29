@@ -52,7 +52,7 @@ void Robot::LineScan(){
     cv::Point p1 = rotated_[1];
     cv::Point p2 = rotated_[2];
     
-    int num_lines = 15;
+    int num_lines = 23;
     
     detected_.clear();
     distances_.clear();
@@ -80,9 +80,9 @@ void Robot::LineScan(){
         // Filter intersection points per line
         std::vector<cv::Point2f> filtered = FilterClose(temp_points);
         // distances_.push_back(getDistance(filtered));
-        // detected_.push_back(filtered);
 
         for(int i=0;i<filtered.size();i++){
+            detected_.push_back(filtered[i]);
             distance_.push_back(GetDistance(filtered[i]));
         }
        
