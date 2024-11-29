@@ -2,6 +2,11 @@
 
 Robot::Robot(cv::Mat mapInput){
     fieldmap_ = mapInput;
+    landmarks_ = {
+        Landmark("X", {{475, 225}, {475, 425}}),
+        Landmark("T", {{50, 110}, {50, 540}, {475, 50}, {475, 600}, {900, 110}, {900, 540}}),
+        Landmark("L", {{50, 50}, {50, 600}, {145, 110}, {145, 540}, {805, 110}, {805, 540}, {900, 50}, {900, 600}})
+    };
 }
 
 void Robot::init(cv::Point2f pos, float orient, float w, int n, cv::Size& mapSize){
@@ -28,6 +33,8 @@ bool Robot::MainLoop(float move, float orient){
     activedParticleScan();
     regularMove(mapSize_, move, orient);
     particles_ = resampleParticles(particles_);
+
+    DetectingLandmark();
     // std::cout<<particles_.size()<<std::endl;
 
     return true;
@@ -91,4 +98,18 @@ cv::Point2f Robot::getMeanPosition() const {
     }
 
     return cv::Point2f(sumX / particleCount, sumY / particleCount);
+}
+
+void Robot::DetectingLandmark(){
+    lm_.clear();
+    for(int i=0; i < landmarks_.size(); i++){
+        for(int j=0; j < landmarks_[i].positions.size(); j++){
+            if(landmarks_[i].isDetected(rotated_, landmarks_[i].positions[j])){
+                DetectedLandmark det;
+                det.id = landmarks_[i].getID();
+                det.distance = GetDistance(cv::Point(landmarks_[i].positions[j].first, landmarks_[i].positions[j].second));
+                lm_.push_back(det);
+            }
+        }
+    }
 }

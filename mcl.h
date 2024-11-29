@@ -11,6 +11,10 @@ const cv::Scalar merah = cv::Scalar(0, 0, 255);
 const cv::Scalar hijau = cv::Scalar(0, 255, 0);
 const cv::Scalar biru = cv::Scalar(255, 0, 0);
 
+struct DetectedLandmark{
+    std::string id;
+    double distance;
+};
 
 class Robot
 {
@@ -29,7 +33,8 @@ class Robot
         std::vector<std::vector<double>> distances_;
         std::vector<double> distance_;
 
-        std::vector<Landmark> landmarks;
+        std::vector<Landmark> landmarks_;
+        std::vector<DetectedLandmark> lm_;
 
         // property
         Robot(cv::Mat mapInput);
@@ -37,6 +42,7 @@ class Robot
         std::vector<Robot> resampleParticles(const std::vector<Robot>& particles);
         bool MainLoop(float move, float orient);
         cv::Point2f getMeanPosition() const;
+        void DetectingLandmark();
 
         //sense and update
         void regularMove(const cv::Size& mapSize, float speed, float orient);
