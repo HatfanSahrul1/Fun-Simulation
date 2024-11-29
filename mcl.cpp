@@ -41,6 +41,10 @@ void drawMap(cv::Mat& map, const cv::Size& size){
     cv::rectangle(map, cv::Point(width - 50 - 95, 50 + 60), cv::Point(width - 50, height - 50 - 60), cv::Scalar(255), 2);
 }
 
+void on_trackbar(int, void* userdata){
+
+}
+
 int main(){
     cv::Size mapSize(950, 650);
     cv::Mat map, display;
@@ -57,16 +61,20 @@ int main(){
 
     float updateMove = 0.0f, updateOrient = 0.0f;
 
+    int control_value[2] = {1, 1};
 
+    cv::namedWindow("control", cv::WINDOW_AUTOSIZE);
+    cv::createTrackbar("move", "control", &control_value[0], 2, on_trackbar, control_value);
+    cv::createTrackbar("orient", "control", &control_value[1], 2, on_trackbar, control_value);
 
+    on_trackbar(0, control_value);
 
-    while (myRobot.MainLoop(updateMove, updateOrient)){
+    while (myRobot.MainLoop(control_value[0] + (-1), control_value[1] + (-1))){
         
         cv::imshow("Monte Carlo Localization Visualization", myRobot.display_);
-
-        updateMove=0;
-        updateOrient=0;
-        control(updateMove, updateOrient);
+        // updateMove=0;
+        // updateOrient=0;
+        // control(updateMove, updateOrient);
         
         if (cv::waitKey(1)==27) break;
     }
