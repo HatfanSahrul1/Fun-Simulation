@@ -5,6 +5,8 @@
 #include <cmath>
 #include <algorithm>
 
+#include "landmark.h"
+
 const cv::Scalar merah = cv::Scalar(0, 0, 255);
 const cv::Scalar hijau = cv::Scalar(0, 255, 0);
 const cv::Scalar biru = cv::Scalar(255, 0, 0);
@@ -26,6 +28,8 @@ class Robot
         std::vector<cv::Point2f> detected_;
         std::vector<std::vector<double>> distances_;
         std::vector<double> distance_;
+
+        std::vector<Landmark> landmarks;
 
         // property
         Robot(cv::Mat mapInput);
@@ -49,6 +53,7 @@ class Robot
         std::vector<cv::Point2f> FilterClose(std::vector<cv::Point2f> points);
         std::vector<double> getDistance(std::vector<cv::Point2f> points);
         double GetDistance(cv::Point2f points);
+        double GetDistance(cv::Point points);
         double euclideanDistance(const std::vector<double>& v1, const std::vector<double>& v2);
         double calculateSimilarity(const std::vector<std::vector<double>>& distances1, const std::vector<std::vector<double>>& distances2);
         double calculateCosineSimilarity(const std::vector<double>& vec1, const std::vector<double>& vec2);
