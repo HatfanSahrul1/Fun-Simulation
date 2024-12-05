@@ -36,6 +36,8 @@ class Robot
         std::vector<Landmark> landmarks_;
         std::vector<DetectedLandmark> lm_;
 
+        std::vector<std::vector<bool>> BinaryMatrix_;
+
         // property
         Robot(cv::Mat mapInput);
         void init(cv::Point2f pos, float orient, float w, int n, cv::Size& mapSize);
@@ -63,6 +65,8 @@ class Robot
         double euclideanDistance(const std::vector<double>& v1, const std::vector<double>& v2);
         double calculateSimilarity(const std::vector<std::vector<double>>& distances1, const std::vector<std::vector<double>>& distances2);
         double calculateCosineSimilarity(const std::vector<double>& vec1, const std::vector<double>& vec2);
+        double calculateCosineSimilarity(const std::vector<double>& vec1, const std::vector<double>& vec2, const std::vector<DetectedLandmark>& particleLm);
+        double landmarkSimilarity(const std::vector<DetectedLandmark>& robotLm, const std::vector<DetectedLandmark>& particleLm);
         void normalizeWeights(std::vector<Robot>& particles);
         double getMaxWeight(const std::vector<Robot>& particles);
         double averageWeight(const std::vector<Robot>& robots);
@@ -76,5 +80,8 @@ class Robot
         void printSimilarity();
         void LineScan(int i);
 
+        //experimental (di senseUpdate)
+        std::vector<std::vector<bool>> ConvertToBinaryMatrix(const cv::Mat& image);
+        void LineScan(const std::vector<std::vector<bool>> binaryMatrix);
         
 };

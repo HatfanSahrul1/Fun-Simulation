@@ -70,10 +70,29 @@ void debugLandmark(){
     on_trackbar(0, points);
 }
 
+void showSummary(std::vector<DetectedLandmark> lm){
+    cv::Mat img = cv::Mat::zeros(300, 400, CV_8UC3);
+
+    std::string jumlah = "Jumlah: " + std::to_string(lm.size());
+    cv::putText(img, jumlah, cv::Point(10, 30), 
+                cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(255, 255, 255), 2);
+    for (int i = 0; i < lm.size(); i++) {
+        std::string status = "(" + lm[i].id + ", " + std::to_string(lm[i].distance) + ")";
+        
+        int y_position = 60 + i * 30;
+        
+        if (y_position > img.rows - 10) break;
+
+        cv::putText(img, status, cv::Point(10, y_position), 
+                    cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(255, 255, 255), 1);
+    }
+    cv::imshow("control", img);
+}
+
 int main(){
     cv::Size mapSize(950, 650);
     cv::Mat map, display;
-    int n = 40;
+    int n = 1;
     
     cv::Point2f position = cv::Point2f(mapSize.width / 2 + 5, mapSize.height / 2 - 70);
     float orientation = 0.0f;
@@ -96,6 +115,7 @@ int main(){
 
     while (myRobot.MainLoop(control_value[0] + (-1), control_value[1] + (-1))){
         
+        showSummary(myRobot.lm_);
         cv::imshow("Monte Carlo Localization Visualization", myRobot.display_);
         
         if (cv::waitKey(1)==27) break;

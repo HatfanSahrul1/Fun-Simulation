@@ -20,13 +20,13 @@ void Robot::drawParticles(cv::Mat& map, std::vector<Robot>& particles) {
 
 
 void Robot::printPoint(){
-    for(const auto& p : distances_){
-        for(const auto& pc : p){
-            std::cout<<pc;
-        }
-        std::cout<<std::endl;
+    for(const auto& p : distance_){
+        // for(const auto& pc : p){
+        //     std::cout<<pc;
+        // }
+        std::cout<<p<<std::endl;
     }
-    std::cout<<distances_.size()<<std::endl;
+    std::cout<<distance_.size()<<std::endl;
 }
 
 void Robot::printSimilarity(){

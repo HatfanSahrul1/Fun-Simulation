@@ -100,6 +100,64 @@ double Robot::calculateCosineSimilarity(const std::vector<double>& vec1, const s
     return dotProduct / (std::sqrt(magnitudeVec1) * std::sqrt(magnitudeVec2));
 }
 
+double Robot::calculateCosineSimilarity(const std::vector<double>& vec1, const std::vector<double>& vec2, const std::vector<DetectedLandmark>& particleLm) {
+    double dotProduct = 0.0;
+    double magnitudeVec1 = 0.0;
+    double magnitudeVec2 = 0.0;
+
+    size_t minLength = std::min(vec1.size(), vec2.size());
+    for (size_t i = 0; i < minLength; ++i) {
+        dotProduct += vec1[i] * vec2[i];
+        magnitudeVec1 += vec1[i] * vec1[i];
+        magnitudeVec2 += vec2[i] * vec2[i];
+    }
+
+    double cosineSimilarity = 0.0;
+    if (magnitudeVec1 > 0.0 && magnitudeVec2 > 0.0) {
+        cosineSimilarity = dotProduct / (std::sqrt(magnitudeVec1) * std::sqrt(magnitudeVec2));
+    }
+
+    // Pastikan cosine similarity dalam rentang [0.0, 1.0]
+    cosineSimilarity = std::max(0.0, std::min(1.0, cosineSimilarity));
+
+    // **Landmark Similarity**
+    if (lm_.empty() && particleLm.empty()) {
+        return 1.0; // Kedua landmark kosong, bobot maksimum
+    } else if (lm_.empty() || particleLm.empty()) {
+        return cosineSimilarity; // Salah satu kosong, hanya mengandalkan cosine similarity
+    }
+
+    // Map untuk lookup cepat
+    std::unordered_map<std::string, double> robotMap;
+    for (const auto& lm : lm_) {
+        robotMap[lm.id] = lm.distance;
+    }
+
+    double totalWeight = 0.0;
+    const double sigma = 10.0;
+
+    for (const auto& plm : particleLm) {
+        auto it = robotMap.find(plm.id);
+        if (it != robotMap.end()) {
+            double diff = it->second - plm.distance;
+            totalWeight += std::exp(-(diff * diff) / (2 * sigma * sigma));
+        }
+    }
+
+    // Pastikan landmark similarity dalam rentang [0.0, 1.0]
+    double landmarkSimilarity = (particleLm.empty()) ? 0.0 : std::min(1.0, totalWeight / particleLm.size());
+
+    // **Combine Both Similarities**
+    const double alpha = 0.5; // Bobot untuk vector similarity
+    const double beta = 0.5;  // Bobot untuk landmark similarity
+
+    double combinedSimilarity = (alpha * cosineSimilarity) + (beta * landmarkSimilarity);
+
+    // Pastikan hasil akhir dalam rentang [0.0, 1.0]
+    return std::max(0.0, std::min(1.0, combinedSimilarity));
+}
+
+
 std::vector<cv::Point2f> Robot::FilterClose(std::vector<cv::Point2f> points) {
     std::vector<cv::Point2f> result;
     std::vector<bool> visited(points.size(), false);
@@ -168,4 +226,44 @@ double Robot::averageWeight(const std::vector<Robot>& robots) {
     }
 
     return totalWeight / robots.size(); // Menghitung rata-rata
+}
+
+double Robot::landmarkSimilarity(const std::vector<DetectedLandmark>& robotLm, 
+                       const std::vector<DetectedLandmark>& particleLm) {
+    // Handle empty vectors
+    if (robotLm.empty() && particleLm.empty()) {
+        return 1.0; // Both are empty, assign a default weight
+    } else if (robotLm.empty() || particleLm.empty()) {
+        return 0.0; // One is empty, low weight
+    }
+
+    // Map for faster lookup by id
+    std::unordered_map<std::string, double> robotMap;
+    for (const auto& landmark : robotLm) {
+        robotMap[landmark.id] = landmark.distance;
+    }
+
+    // Parameters for similarity calculation
+    double totalWeight = 0.0;
+    int matchCount = 0;
+    const double sigma = 10.0; // Tolerance for distance matching
+
+    // Compare particle landmarks with robot landmarks
+    for (const auto& particleLandmark : particleLm) {
+        auto it = robotMap.find(particleLandmark.id);
+        if (it != robotMap.end()) {
+            // Calculate similarity using a Gaussian function
+            double distanceDiff = std::abs(it->second - particleLandmark.distance);
+            double similarity = std::exp(-(distanceDiff * distanceDiff) / (2 * sigma * sigma));
+            totalWeight += similarity;
+            ++matchCount;
+        }
+    }
+
+    // Normalize weight by the number of matched landmarks
+    if (matchCount > 0) {
+        return totalWeight / matchCount;
+    } else {
+        return 0.0; // No matches found
+    }
 }

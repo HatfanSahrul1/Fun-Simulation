@@ -2,6 +2,7 @@
 
 Robot::Robot(cv::Mat mapInput){
     fieldmap_ = mapInput;
+    BinaryMatrix_ = ConvertToBinaryMatrix(fieldmap_);
     landmarks_ = {
         Landmark("X", {{475, 225}, {475, 425}}),
         Landmark("T", {{50, 110}, {50, 540}, {475, 50}, {475, 600}, {900, 110}, {900, 540}}),
@@ -26,7 +27,7 @@ bool Robot::MainLoop(float move, float orient){
     
     drawRobot(display_);
     CreateFov();
-    LineScan();
+    LineScan(BinaryMatrix_);
 
     drawFov(display_);
     
@@ -36,6 +37,7 @@ bool Robot::MainLoop(float move, float orient){
 
     DetectingLandmark();
     // std::cout<<particles_.size()<<std::endl;
+    // printPoint();
 
     return true;
 }
@@ -51,7 +53,7 @@ std::vector<Robot> Robot::resampleParticles(const std::vector<Robot>& particles)
     
     double maxWeight = getMaxWeight(particles);
     std::cout<<"weight : "<<maxWeight<<" rerata : "<<averageWeight(particles_)<<std::endl;
-    if(maxWeight < 0.95){
+    if(maxWeight < 1.45){
         return initializeParticles(n_particles_, mapSize_);
     }
 
