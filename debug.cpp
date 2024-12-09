@@ -3,6 +3,7 @@
 
 void Robot::drawRobot(cv::Mat& map) {
     cv::circle(map, position_, 5, hijau, -1);  // blue robotRobot
+    cv::circle(map, getMeanPosition(), 5, biru, -1);  // blue robotRobot
 }
 
 void Robot::drawParticles(cv::Mat& map, std::vector<Robot>& particles) {

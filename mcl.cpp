@@ -92,7 +92,7 @@ void showSummary(std::vector<DetectedLandmark> lm){
 int main(){
     cv::Size mapSize(950, 650);
     cv::Mat map, display;
-    int n = 1;
+    int n = 100;
     
     cv::Point2f position = cv::Point2f(mapSize.width / 2 + 5, mapSize.height / 2 - 70);
     float orientation = 0.0f;

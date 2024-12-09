@@ -10,6 +10,10 @@ Robot::Robot(cv::Mat mapInput){
     };
 }
 
+Robot::Robot(){
+
+}
+
 void Robot::init(cv::Point2f pos, float orient, float w, int n, cv::Size& mapSize){
     position_ = pos;
     orientation_ = orient;
@@ -27,15 +31,20 @@ bool Robot::MainLoop(float move, float orient){
     
     drawRobot(display_);
     CreateFov();
-    LineScan(BinaryMatrix_);
+    // LineScan(BinaryMatrix_);
+    distance_ = LineDistance(fieldmap_);
+    DetectingLandmark();
 
     drawFov(display_);
     
     activedParticleScan();
     regularMove(mapSize_, move, orient);
     particles_ = resampleParticles(particles_);
-
-    DetectingLandmark();
+    
+    // if(!lm_.empty()){
+    //     particles_ = resamplingLandmark(particles_);
+    //     std::cout<<lm_[0].id<<" "<<lm_[0].distance<<std::endl;
+    // }
     // std::cout<<particles_.size()<<std::endl;
     // printPoint();
 
@@ -53,9 +62,9 @@ std::vector<Robot> Robot::resampleParticles(const std::vector<Robot>& particles)
     
     double maxWeight = getMaxWeight(particles);
     std::cout<<"weight : "<<maxWeight<<" rerata : "<<averageWeight(particles_)<<std::endl;
-    if(maxWeight < 1.45){
-        return initializeParticles(n_particles_, mapSize_);
-    }
+    // if(maxWeight < 0.95){
+    //     return initializeParticles(n_particles_, mapSize_);
+    // }
 
     // Setup random number generator
     std::random_device rd;
@@ -75,7 +84,7 @@ std::vector<Robot> Robot::resampleParticles(const std::vector<Robot>& particles)
         for (const auto& particle : mutableParticles) {
             cumulativeWeight += particle.weight_;
             if (randChoice <= cumulativeWeight) {
-                Robot newParticle(fieldmap_);
+                Robot newParticle;
                 
                 newParticle.position_.x = particle.position_.x + noise(gen);
                 newParticle.position_.y = particle.position_.y + noise(gen);

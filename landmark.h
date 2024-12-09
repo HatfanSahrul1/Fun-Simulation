@@ -19,7 +19,7 @@ class Landmark {
             return cv::pointPolygonTest(area, cv::Point2f(pos.first, pos.second), false) >= 0;
         }
 
-        std::string getID(){
+        std::string getID() const {
             return id;
         }
 };

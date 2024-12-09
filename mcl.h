@@ -40,6 +40,7 @@ class Robot
 
         // property
         Robot(cv::Mat mapInput);
+        Robot();
         void init(cv::Point2f pos, float orient, float w, int n, cv::Size& mapSize);
         std::vector<Robot> resampleParticles(const std::vector<Robot>& particles);
         bool MainLoop(float move, float orient);
@@ -58,6 +59,7 @@ class Robot
 
         //math and operations
         cv::Point RotatePoint(const cv::Point2f& p, const cv::Point2f& pivot, double angle);
+        void Rotate(float& x, float& y, double r, double theta); //sesuai teori rotasi matriks
         std::vector<cv::Point2f> FilterClose(std::vector<cv::Point2f> points);
         std::vector<double> getDistance(std::vector<cv::Point2f> points);
         double GetDistance(cv::Point2f points);
@@ -83,5 +85,7 @@ class Robot
         //experimental (di senseUpdate)
         std::vector<std::vector<bool>> ConvertToBinaryMatrix(const cv::Mat& image);
         void LineScan(const std::vector<std::vector<bool>> binaryMatrix);
+        std::vector<Robot> resamplingLandmark(const std::vector<Robot>& particles);
+        std::vector<double> LineDistance(cv::Mat map);
         
 };

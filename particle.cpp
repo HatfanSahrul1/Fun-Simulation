@@ -10,7 +10,7 @@ std::vector<Robot> Robot::initializeParticles(int numParticles, const cv::Size& 
     std::uniform_real_distribution<> disTheta(0, 2 * CV_PI);
     
     for (int i = 0; i < numParticles; ++i) {
-        Robot p(fieldmap_);
+        Robot p;
         p.position_ = cv::Point2f(disX(gen), disY(gen));
         p.orientation_ = disTheta(gen);
         p.weight_ = 1.0 / numParticles;  // uniform weight_
@@ -35,9 +35,11 @@ void Robot::activedParticleScan(){
     #pragma omp parallel for
     for(int i=0;i<particles_.size();i++){
         particles_[i].CreateFov();
-        particles_[i].LineScan();
-        // particles_[i].LineScan(particles_[i].BinaryMatrix_);
-        particles_[i].DetectingLandmark();
-        particles_[i].weight_ += calculateCosineSimilarity(distance_, particles_[i].distance_, particles_[i].lm_);
+        // particles_[i].LineScan();
+        // particles_[i].LineScan(BinaryMatrix_);
+        particles_[i].distance_ = particles_[i].LineDistance(fieldmap_);
+        // particles_[i].DetectingLandmark();
+        particles_[i].weight_ += calculateCosineSimilarity(distance_, particles_[i].distance_);
+        // particles_[i].weight_ += calculateCosineSimilarity(distance_, particles_[i].distance_, particles_[i].lm_);
     }
 }

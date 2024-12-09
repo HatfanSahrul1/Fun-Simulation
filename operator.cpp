@@ -12,6 +12,11 @@ cv::Point Robot::RotatePoint(const cv::Point2f& p, const cv::Point2f& pivot, dou
     return cv::Point(x_new, y_new);
 }
 
+void Robot::Rotate(float& x, float& y, double r, double theta){
+    x = r * std::cos(-(theta * M_PI) / 180);
+    y = r * std::sin(-(theta * M_PI) / 180);
+}
+
 std::vector<double> Robot::getDistance(std::vector<cv::Point2f> points){
     std::vector<double> measured;
 
