@@ -43,6 +43,8 @@ class Robot
         Robot();
         void init(cv::Point2f pos, float orient, float w, int n, cv::Size& mapSize);
         std::vector<Robot> resampleParticles(const std::vector<Robot>& particles);
+        std::vector<Robot> resampleParticlesFPS(const std::vector<Robot>& particles);
+        std::vector<Robot> resampleParticlesSUS(const std::vector<Robot>& particles);
         bool MainLoop(float move, float orient);
         cv::Point2f getMeanPosition() const;
         void DetectingLandmark();

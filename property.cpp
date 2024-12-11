@@ -39,7 +39,7 @@ bool Robot::MainLoop(float move, float orient){
     
     activedParticleScan();
     regularMove(mapSize_, move, orient);
-    particles_ = resampleParticles(particles_);
+    particles_ = resampleParticlesSUS(particles_);
     
     // if(!lm_.empty()){
     //     particles_ = resamplingLandmark(particles_);
@@ -95,6 +95,85 @@ std::vector<Robot> Robot::resampleParticles(const std::vector<Robot>& particles)
             }
         }
     }
+    return newParticles;
+}
+
+std::vector<Robot> Robot::resampleParticlesFPS(const std::vector<Robot>& particles) {
+    std::vector<Robot> newParticles;
+    int numParticles = particles.size();
+    
+    // Normalize weights
+    std::vector<Robot> mutableParticles = particles; // Make a mutable copy for normalization
+    normalizeWeights(mutableParticles);
+
+    double maxWeight = getMaxWeight(mutableParticles);
+    std::cout << "weight: " << maxWeight << " rerata: " << averageWeight(mutableParticles) << std::endl;
+
+    // Setup random number generator
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(0.0, 1.0);
+    std::normal_distribution<> noise(0.0, 5.0);  // Position noise in pixels
+
+    // Fitness Proportionate Selection
+    int index = static_cast<int>(dis(gen) * numParticles);
+    double beta = 0.0;
+
+    for (int i = 0; i < numParticles; ++i) {
+        beta += dis(gen) * 2.0 * maxWeight;  // Random increment for beta
+
+        while (beta > mutableParticles[index].weight_) {
+            beta -= mutableParticles[index].weight_;
+            index = (index + 1) % numParticles;  // Circular indexing
+        }
+
+        // Create new particle based on selected particle
+        Robot newParticle;
+        newParticle.position_.x = mutableParticles[index].position_.x + noise(gen);
+        newParticle.position_.y = mutableParticles[index].position_.y + noise(gen);
+        newParticle.weight_ = 1.0 / numParticles;  // Reset new weight
+        newParticles.push_back(newParticle);
+    }
+
+    return newParticles;
+}
+
+std::vector<Robot> Robot::resampleParticlesSUS(const std::vector<Robot>& particles) {
+    std::vector<Robot> newParticles;
+    int numParticles = particles.size();
+
+    // Normalize weights
+    std::vector<Robot> mutableParticles = particles;  // Make a mutable copy for normalization
+    normalizeWeights(mutableParticles);
+
+    double maxWeight = getMaxWeight(mutableParticles);
+    
+    // Setup random number generator
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(0, 1);
+    std::normal_distribution<> noise(0, 5.0);  // Position noise in pixels
+
+    int index = static_cast<int>(dis(gen) * numParticles);
+    double beta = 0.0;
+
+    for (int i = 0; i < numParticles; ++i) {
+        beta += dis(gen) * 2.0 * maxWeight;
+
+        while (beta > mutableParticles[index].weight_) {
+            beta -= mutableParticles[index].weight_;
+            index = (index + 1) % numParticles;
+        }
+
+        // Create a new particle with added noise
+        Robot newParticle;
+        newParticle.position_.x = mutableParticles[index].position_.x + noise(gen);
+        newParticle.position_.y = mutableParticles[index].position_.y + noise(gen);
+        newParticle.weight_ = 1.0 / numParticles;  // Reset new weight
+
+        newParticles.push_back(newParticle);
+    }
+
     return newParticles;
 }
 

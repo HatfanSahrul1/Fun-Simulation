@@ -26,6 +26,14 @@ void control(float &move, float &orient){
     }
 }
 
+int Randomizer(int a, int b){
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<> value(a, b);
+    
+    return value(gen);
+}
+
 void drawMap(cv::Mat& map, const cv::Size& size){
     int width = size.width;
     int height = size.height;
@@ -92,10 +100,10 @@ void showSummary(std::vector<DetectedLandmark> lm){
 int main(){
     cv::Size mapSize(950, 650);
     cv::Mat map, display;
-    int n = 100;
+    int n = 500;
     
-    cv::Point2f position = cv::Point2f(mapSize.width / 2 + 5, mapSize.height / 2 - 70);
-    float orientation = 0.0f;
+    cv::Point2f position = cv::Point2f(Randomizer(100, 800), Randomizer(100, 500));
+    float orientation = (float) Randomizer(0, 359);
     float weight = 1.0f;
 
     drawMap(map, mapSize);

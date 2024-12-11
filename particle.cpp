@@ -35,8 +35,6 @@ void Robot::activedParticleScan(){
     #pragma omp parallel for
     for(int i=0;i<particles_.size();i++){
         particles_[i].CreateFov();
-        // particles_[i].LineScan();
-        // particles_[i].LineScan(BinaryMatrix_);
         particles_[i].distance_ = particles_[i].LineDistance(fieldmap_);
         // particles_[i].DetectingLandmark();
         particles_[i].weight_ += calculateCosineSimilarity(distance_, particles_[i].distance_);
