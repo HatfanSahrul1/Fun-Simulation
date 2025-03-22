@@ -10,9 +10,7 @@ Robot::Robot(cv::Mat mapInput){
     };
 }
 
-Robot::Robot(){
-
-}
+Robot::Robot(){}
 
 void Robot::init(cv::Point2f pos, float orient, float w, int n, cv::Size& mapSize){
     position_ = pos;
@@ -21,6 +19,9 @@ void Robot::init(cv::Point2f pos, float orient, float w, int n, cv::Size& mapSiz
     n_particles_ = n;
     mapSize_ = mapSize;
     particles_ = initializeParticles(n_particles_, mapSize_);
+
+    src_sensor_ = cv::Mat::zeros(cv::Size(180*2, 200), CV_8UC3);
+    gradient_ = cv::imread("/home/eros/images/inverted.jpg", cv::IMREAD_GRAYSCALE);
 }
 
 bool Robot::MainLoop(float move, float orient){
@@ -31,15 +32,16 @@ bool Robot::MainLoop(float move, float orient){
     
     drawRobot(display_);
     CreateFov();
-    // LineScan(BinaryMatrix_);
+    LineScan();
     distance_ = LineDistance(fieldmap_);
-    DetectingLandmark();
-
+    // DetectingLandmark();
+    GetDataRelative();
     drawFov(display_);
+    // DrawIntersectionPoints(display_, detected_);
     
     activedParticleScan();
     regularMove(mapSize_, move, orient);
-    particles_ = resampleParticlesSUS(particles_);
+    // particles_ = resampleParticlesSUS(particles_);
     
     // if(!lm_.empty()){
     //     particles_ = resamplingLandmark(particles_);
@@ -47,7 +49,6 @@ bool Robot::MainLoop(float move, float orient){
     // }
     // std::cout<<particles_.size()<<std::endl;
     // printPoint();
-
     return true;
 }
 

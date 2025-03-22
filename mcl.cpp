@@ -100,7 +100,7 @@ void showSummary(std::vector<DetectedLandmark> lm){
 int main(){
     cv::Size mapSize(950, 650);
     cv::Mat map, display;
-    int n = 500;
+    int n = 2;
     
     cv::Point2f position = cv::Point2f(Randomizer(100, 800), Randomizer(100, 500));
     float orientation = (float) Randomizer(0, 359);

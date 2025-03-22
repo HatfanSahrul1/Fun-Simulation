@@ -272,3 +272,15 @@ double Robot::landmarkSimilarity(const std::vector<DetectedLandmark>& robotLm,
         return 0.0; // No matches found
     }
 }
+
+void Robot::GetDataRelative(){
+    data_relative_.clear();
+
+    for(int i = 0; i < detected_.size(); i++){
+        cv::Point unrotate = RotatePoint(detected_[i], position_, -orientation_);
+        cv::Point dataRaw = cv::Point(unrotate.x - position_.x, unrotate.y - position_.y);
+        // std::cout<<"un" << dataRaw<< std::endl;
+
+        data_relative_.push_back(dataRaw);
+    }
+}

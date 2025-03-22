@@ -52,7 +52,7 @@ void Robot::LineScan(){
     cv::Point p1 = rotated_[1];
     cv::Point p2 = rotated_[2];
     
-    int num_lines = 23;
+    int num_lines = 15;
     
     detected_.clear();
     distances_.clear();

@@ -3,7 +3,8 @@
 
 void Robot::drawRobot(cv::Mat& map) {
     cv::circle(map, position_, 5, hijau, -1);  // blue robotRobot
-    cv::circle(map, getMeanPosition(), 5, biru, -1);  // blue robotRobot
+    cv::line(map, position_, RotatePoint(cv::Point2f(position_.x + 25, position_.y), position_, orientation_), biru, 1);
+    // cv::circle(map, getMeanPosition(), 5, biru, -1);  // blue robotRobot
 }
 
 void Robot::drawParticles(cv::Mat& map, std::vector<Robot>& particles) {
@@ -17,6 +18,23 @@ void Robot::drawParticles(cv::Mat& map, std::vector<Robot>& particles) {
     
     // Draw all keypoints
     cv::drawKeypoints(map, keypoints, map, merah);
+}
+
+void Robot::drawData(cv::Mat& map, std::vector<cv::Point>& data_relative){
+    std::vector<cv::Point> points;
+
+    for(const auto& p : data_relative){
+        cv::Point result = RotatePoint(cv::Point(position_.x + p.x, position_.y + p.y), position_, orientation_);
+        // std::cout<< "dr " << result<<std::endl;
+        points.push_back(result);
+    }
+    
+    for (const auto& p : points) {
+        int x = p.x % map.cols -1;
+        int y = p.y % map.rows -1;
+        std::cout<< p.x <<" " <<p.y<<std::endl;
+        cv::circle(map, p, 5, 255, -1); 
+    }
 }
 
 

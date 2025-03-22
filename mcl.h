@@ -38,6 +38,12 @@ class Robot
 
         std::vector<std::vector<bool>> BinaryMatrix_;
 
+        //Maret 2025
+        cv::Mat src_sensor_, gradient_;
+        std::vector<int> dst_sensor_;
+        std::vector<cv::Point> data_relative_;
+        std::vector<cv::Point> particleSensor_;
+
         // property
         Robot(cv::Mat mapInput);
         Robot();
@@ -58,6 +64,8 @@ class Robot
         std::vector<Robot> initializeParticles(int numParticles, const cv::Size& mapSize);
         void moveParticles(std::vector<Robot>& particles, const cv::Size& mapSize, float& speed, float& orient);
         void activedParticleScan();
+        void SetParticleSensor(std::vector<cv::Point>& data_relative);
+        double CalculateWeight(cv::Mat& gradient, std::vector<cv::Point>& data_relative);
 
         //math and operations
         cv::Point RotatePoint(const cv::Point2f& p, const cv::Point2f& pivot, double angle);
@@ -74,11 +82,13 @@ class Robot
         void normalizeWeights(std::vector<Robot>& particles);
         double getMaxWeight(const std::vector<Robot>& particles);
         double averageWeight(const std::vector<Robot>& robots);
+        void GetDataRelative();
 
         //debug and visualization
         void drawRobot(cv::Mat& map);
         void drawFov(cv::Mat& field);
         void drawParticles(cv::Mat& map, std::vector<Robot>& particles);
+        void drawData(cv::Mat& map, std::vector<cv::Point>& data_relative);
         void DrawIntersectionPoints(cv::Mat& image, const std::vector<cv::Point2f>& intersectionPoints);
         void printPoint();
         void printSimilarity();
