@@ -32,7 +32,7 @@ void Robot::drawData(cv::Mat& map, std::vector<cv::Point>& data_relative){
     for (const auto& p : points) {
         int x = p.x % map.cols -1;
         int y = p.y % map.rows -1;
-        std::cout<< p.x <<" " <<p.y<<std::endl;
+        // std::cout<< p.x <<" " <<p.y<<std::endl;
         cv::circle(map, p, 5, 255, -1); 
     }
 }

@@ -53,6 +53,7 @@ class Robot
         std::vector<Robot> resampleParticlesSUS(const std::vector<Robot>& particles);
         bool MainLoop(float move, float orient);
         cv::Point2f getMeanPosition() const;
+        float getMeanOrient() const;
         void DetectingLandmark();
 
         //sense and update
