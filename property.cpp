@@ -25,9 +25,10 @@ void Robot::init(cv::Point2f pos, float orient, float w, int n, cv::Size& mapSiz
 }
 
 bool Robot::MainLoop(float move, float orient){
+    Robot estimation;
     display_ = fieldmap_.clone();
     cv::cvtColor(display_, display_, cv::COLOR_GRAY2BGR);
-
+    
     drawParticles(display_, particles_);
     
     drawRobot(display_);
@@ -38,11 +39,23 @@ bool Robot::MainLoop(float move, float orient){
     GetDataRelative();
     drawFov(display_);
     // DrawIntersectionPoints(display_, detected_);
+    estimation.position_ = getMeanPosition();
+    estimation.orientation_ = getMeanOrient();
+    estimation.drawRobot(display_);
+    estimation.drawData(display_, data_relative_);
+    std::cout << estimation.orientation_ << std::endl;
     
     activedParticleScan();
     regularMove(mapSize_, move, orient);
-    // particles_ = resampleParticlesSUS(particles_);
+    particles_ = resampleParticlesFPS(particles_);
     
+    // static int c = 0;
+    // if(c != 0){
+    //     particles_ = resampleParticlesFPS(particles_);
+    // }else{
+    //     particles_ = initializeParticles(n_particles_, mapSize_);
+    // }
+    // c = (c + 1) % 100;
     // if(!lm_.empty()){
     //     particles_ = resamplingLandmark(particles_);
     //     std::cout<<lm_[0].id<<" "<<lm_[0].distance<<std::endl;
@@ -62,7 +75,7 @@ std::vector<Robot> Robot::resampleParticles(const std::vector<Robot>& particles)
     normalizeWeights(mutableParticles);
     
     double maxWeight = getMaxWeight(particles);
-    std::cout<<"weight : "<<maxWeight<<" rerata : "<<averageWeight(particles_)<<std::endl;
+    // std::cout<<"weight : "<<maxWeight<<" rerata : "<<averageWeight(particles_)<<std::endl;
     // if(maxWeight < 0.95){
     //     return initializeParticles(n_particles_, mapSize_);
     // }
@@ -108,7 +121,7 @@ std::vector<Robot> Robot::resampleParticlesFPS(const std::vector<Robot>& particl
     normalizeWeights(mutableParticles);
 
     double maxWeight = getMaxWeight(mutableParticles);
-    std::cout << "weight: " << maxWeight << " rerata: " << averageWeight(mutableParticles) << std::endl;
+    // std::cout << "weight: " << maxWeight << " rerata: " << averageWeight(mutableParticles) << std::endl;
 
     // Setup random number generator
     std::random_device rd;
@@ -189,6 +202,21 @@ cv::Point2f Robot::getMeanPosition() const {
     }
 
     return cv::Point2f(sumX / particleCount, sumY / particleCount);
+}
+
+float Robot::getMeanOrient() const {
+    float sum = 0.0f;
+    int particleCount = particles_.size();
+    
+    if (particleCount == 0) {
+        return 0.0f; // atau nilai default lainnya
+    }
+
+    for (const auto& particle : particles_) {
+        sum += particle.orientation_;
+    }
+
+    return sum / particleCount;
 }
 
 void Robot::DetectingLandmark(){
